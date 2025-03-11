@@ -132,7 +132,7 @@ def main():
         if not sukces:
             print(f"Nie znaleziono rozwiązania w {iteracje+1} iteracjach, zwrócono ostatnią wartość: {wynik}")
         else:
-            print(f"Znaleziono rozwiązanie: {wynik} w {iteracje} iteracjach")
+            print(f"Znaleziono rozwiązanie: {wynik} w {iteracje+1} iteracjach")
     except ValueError as e:
         print(e)
 
