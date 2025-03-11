@@ -69,12 +69,27 @@ def wykres(f,fx, fy):
 def przedzial_menu(f):
     while True:
         try:
-            a = float(input("Podaj początek przedziału: "))
-            b = float(input("Podaj koniec przedziału: "))
-            if a != b and f(a) * f(b) < 0:
-                return a, b
-        except ValueError:
-            print("Dla podanych parametrów wartość funkcji musi mieć różne znaki, spróbuj ponownie!")
+            print("\nWybierz przedział [a,b] taki, że f(a) i f(b) mają różne znaki")
+            a = float(input("Podaj początek przedziału (a): "))
+            b = float(input("Podaj koniec przedziału (b): "))
+
+            if a >= b:
+                print("Błąd: Początek przedziału (a) musi być mniejszy niż koniec (b).")
+            else:
+                fa = f(a)
+                fb = f(b)
+
+                if fa * fb < 0:
+                    print(f"OK: f({a}) = {fa:.4f}, f({b}) = {fb:.4f}")
+                    return a, b
+                else:
+                    print(f"Błąd: Funkcja musi mieć różne znaki na końcach przedziału.")
+                    print(f"f({a}) = {fa:.4f}, f({b}) = {fb:.4f}")
+                    print("Spróbuj wybrać inny przedział na podstawie wykresu.")
+        except ValueError as e:
+            print(f"Błąd: {e}. Spróbuj ponownie.")
+        except Exception as e:
+            print(f"Wystąpił błąd: {e}. Spróbuj inny przedział.")
 
 
 def opcja_menu():
@@ -101,7 +116,7 @@ def main():
     con, val = opcja_menu()
     try:
         wynik, iteracje = bisekcja(f['f'], a, b, con, val)
-        print(f"Znaleziono rozwiązanie: {wynik} w {iteracje} iteracjach")
+        print(f"Znaleziono rozwiązanie: x={wynik} w {iteracje} iteracjach")
     except ValueError as e:
         print(e)
 
