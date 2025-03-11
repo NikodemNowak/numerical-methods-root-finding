@@ -94,6 +94,7 @@ def przedzial_menu(f):
 
 def opcja_menu():
     con = ''
+    val = 0
     while con not in ['t', 'n']:
         try:
             con = input("Czy chcesz podać liczbę iteracji? (t/n): ").lower()
@@ -102,9 +103,21 @@ def opcja_menu():
         except ValueError:
             print("Błędny wybór, spróbuj ponownie!")
     if con == 't':
-        val = int(input("Podaj liczbę iteracji: "))
+        while val <= 0:
+            try:
+                val = int(input("Podaj liczbę iteracji: "))
+                if val <= 0:
+                    raise ValueError
+            except ValueError:
+                print("Wartość musi być dodatnia!")
     else:
-        val = float(input("Podaj dokładność: "))
+        while val <= 0:
+            try:
+                val = float(input("Podaj dokładność: "))
+                if val <= 0:
+                    raise ValueError
+            except ValueError:
+                print("Wartość musi być dodatnia!")
     return con, val
 
 
@@ -115,8 +128,11 @@ def main():
     a, b = przedzial_menu(f['f'])
     con, val = opcja_menu()
     try:
-        wynik, iteracje = bisekcja(f['f'], a, b, con, val)
-        print(f"Znaleziono rozwiązanie: x={wynik} w {iteracje} iteracjach")
+        sukces, wynik, iteracje = bisekcja(f['f'], a, b, con, val)
+        if not sukces:
+            print(f"Nie znaleziono rozwiązania w {iteracje+1} iteracjach, zwrócono ostatnią wartość: {wynik}")
+        else:
+            print(f"Znaleziono rozwiązanie: {wynik} w {iteracje} iteracjach")
     except ValueError as e:
         print(e)
 
