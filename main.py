@@ -14,20 +14,20 @@ FUNKCJE = {
     2: {"nazwa": "sin(x) * ln(x+1)",
         "f": lambda x: math.sin(x) * math.log(x + 1),
         "pochodna": lambda x: math.cos(x) * math.log(x + 1) + math.sin(x) / (x + 1),
-        "xrange": (-4, 4),
-        "yrange": (-50, 1)},
+        "xrange": (-1, 4),
+        "yrange": (-2, 3)},
 
-    3: {"nazwa": "e^{cos(2x)}",
-        "f": lambda x: math.exp(math.cos(2 * x)),
+    3: {"nazwa": "e^{cos(2x) - 1}",
+        "f": lambda x: math.exp(math.cos(2 * x)) - 1,
         "pochodna": lambda x: -2 * math.sin(2 * x) * math.exp(math.cos(2 * x)),
         "xrange": (-4, 4),
-        "yrange": (-50, 1)},
+        "yrange": (-1, 2)},
 
-    4: {"nazwa": "2^x + x^2 - tan(x)",
-        "f": lambda x: 2 ** x + x ** 2 - math.tan(x),
-        "pochodna": lambda x: (2 ** x) * math.log(2) + 2 * x - (1 / math.cos(x)) ** 2,
-        "xrange": (-4, 4),
-        "yrange": (-50, 1)},
+    4: {"nazwa": "2^x - 2sin(x) - 2",
+        "f": lambda x: 2 ** x - 2 * math.sin(x) - 2,
+        "pochodna": lambda x: (2 ** x) * math.log(2) - 2 * math.cos(x),
+        "xrange": (-3, 3),
+        "yrange": (-3, 4)},
 }
 
 def funkcja_menu():
@@ -45,7 +45,7 @@ def funkcja_menu():
 
 def wykres(f,fx, fy):
     # Stwórz 500 punktów w wybranym zakresie
-    x = np.linspace(-5, 5, 500)
+    x = np.linspace(-10, 10, 5000)
 
     # Oblicz wartości z obsługą błędów
     y = []
