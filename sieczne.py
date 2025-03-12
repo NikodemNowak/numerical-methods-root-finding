@@ -11,7 +11,7 @@ def sieczne(f, a, b, con, val):
             if not isOk:
                 return False, c, (i + 1)
 
-            if f(c) <= 0.0001:
+            if abs(f(c)) <= 0.0001:
                 return True, c, (i + 1)
 
             a, b = b, c
