@@ -6,7 +6,7 @@ def bisekcja(f, a, b, con, val):
     if con == 't':
         for i in range(val):
             c = (a + b) / 2
-            if abs(f(c)) == 0:
+            if abs(f(c)) <= 0.0001:
                 return True, c, (i + 1)
             if f(a) * f(c) < 0:
                 b = c

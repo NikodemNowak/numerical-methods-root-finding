@@ -28,13 +28,14 @@ def sieczne(f, a, b, con, val):
                 return True, c, (j + 1)
 
             a, b = b, c
+
     return False, b, j
 
 def calculate(f, a, b):
     f_a = f(a)
     f_b = f(b)
 
-    if abs(f_b - f_a) < 1e-12:
+    if abs(f_b - f_a) < 0.0001:
         print("Ostrzeżenie: Mały mianownik - ryzyko błędu numerycznego")
         return False, b
 
