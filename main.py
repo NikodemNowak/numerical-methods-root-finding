@@ -9,7 +9,7 @@ FUNKCJE = {
     1: {"nazwa": "x^3 - 2e^x + 5",
         "f": lambda x: x ** 3 - 2 * math.exp(x) + 5,
         "xrange": (-3, 4),
-        "yrange": (-30, 10)},
+        "yrange": (-5, 5)},
 
     2: {"nazwa": "sin(x) * ln(x+1)",
         "f": lambda x: math.sin(x) * math.log(x + 1),
@@ -40,9 +40,9 @@ def funkcja_menu():
         except ValueError:
             print("Błędny wybór, spróbuj ponownie!")
 
-def wykres(f,fx, fy):
-    # Stwórz 500 punktów w wybranym zakresie
-    x = np.linspace(-10, 10, 5000)
+def wykres(f, fx, fy, *args):
+    # Stwórz 5000 punktów w wybranym zakresie
+    x = np.linspace(fx[0], fx[1], 5000)
 
     # Oblicz wartości z obsługą błędów
     y = []
@@ -60,6 +60,19 @@ def wykres(f,fx, fy):
     plt.axvline(0, color='black', linewidth=1.5)
     plt.title("Podgląd funkcji - wybierz przedział [a,b] na podstawie wykresu")
     plt.grid(True)
+
+    if len(args) > 0:
+        plt.title("Podgląd funkcji z zaznaczonymi punktami i wybranym przedziałem")
+        plt.axvline(args[0], color='red', linestyle='--', label='Punkt startowy')
+        plt.axvline(args[1], color='red', linestyle='--', label='Punkt końcowy')
+        plt.xlim(args[0]-0.1, args[1]+0.1)
+        plt.ylim(-1, 1)
+        plt.plot(args[2], args[3], marker='o', markersize=10, markerfacecolor='none', markeredgecolor='red',
+                 linestyle='None', label='Point 1')
+        plt.plot(args[4], args[5], marker='s', markersize=10, markerfacecolor='none', markeredgecolor='green',
+                 linestyle='None', label='Point 2')
+
+
     plt.show()
 
 
@@ -136,6 +149,7 @@ def main():
             print(f"SIECZNE: Nie znaleziono rozwiązania w {si_iteracje+1} iteracjach, zwrócono ostatnią wartość: {si_wynik}")
         else:
             print(f"SIECZNE: Znaleziono rozwiązanie: {si_wynik} w {si_iteracje+1} iteracjach")
+        wykres(f['f'], f['xrange'], f['yrange'], a, b, bi_wynik, f['f'](bi_wynik), si_wynik, f['f'](si_wynik))
     except ValueError as e:
         print(e)
 
