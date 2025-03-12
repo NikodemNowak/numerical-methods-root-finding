@@ -2,7 +2,7 @@ def bisekcja(f, a, b, con, val):
     c = 0
     j = -1
     if f(a) * f(b) > 0:
-        raise ValueError("f(a) i f(b) muszą mieć przeciwne znaki")
+        raise ValueError("BISEKCJA: f(a) i f(b) muszą mieć przeciwne znaki")
     if con == 't':
         for i in range(val):
             c = (a + b) / 2

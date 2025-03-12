@@ -2,6 +2,7 @@ import math
 from bisekcja import bisekcja
 import matplotlib.pyplot as plt
 import numpy as np
+from sieczne import sieczne
 
 # 1. Baza predefiniowanych funkcji
 FUNKCJE = {
@@ -124,11 +125,17 @@ def main():
     a, b = przedzial_menu(f['f'])
     con, val = opcja_menu()
     try:
-        sukces, wynik, iteracje = bisekcja(f['f'], a, b, con, val)
-        if not sukces:
-            print(f"Nie znaleziono rozwiązania w {iteracje+1} iteracjach, zwrócono ostatnią wartość: {wynik}")
+        bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val)
+        if not bi_sukces:
+            print(f"BISEKCJA: Nie znaleziono rozwiązania w {bi_iteracje+1} iteracjach, zwrócono ostatnią wartość: {bi_wynik}")
         else:
-            print(f"Znaleziono rozwiązanie: {wynik} w {iteracje+1} iteracjach")
+            print(f"BISEKCJA: Znaleziono rozwiązanie: {bi_wynik} w {bi_iteracje+1} iteracjach")
+
+        si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val)
+        if not si_sukces:
+            print(f"SIECZNE: Nie znaleziono rozwiązania w {si_iteracje+1} iteracjach, zwrócono ostatnią wartość: {si_wynik}")
+        else:
+            print(f"SIECZNE: Znaleziono rozwiązanie: {si_wynik} w {si_iteracje+1} iteracjach")
     except ValueError as e:
         print(e)
 
