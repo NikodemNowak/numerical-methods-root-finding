@@ -1,6 +1,7 @@
 from horner import horner
 
 def sieczne(f, a, b, con, val, *args):
+    global c
     licznik_przejsc = -1
     czy_wielomian = len(args) > 0
 
@@ -20,9 +21,9 @@ def sieczne(f, a, b, con, val, *args):
             licznik_przejsc = i
 
             # Oblicz punkt c na podstawie punktów a i b
-            isOk, c = calculate(f, a, b, czy_wielomian, *args)
+            is_ok, c = calculate(f, a, b, czy_wielomian, *args)
 
-            if not isOk:
+            if not is_ok:
                 return False, c, (i + 1)
 
             if czy_wielomian:
@@ -37,12 +38,12 @@ def sieczne(f, a, b, con, val, *args):
 
     # Dla dokładności
     else:
-        while True:
+        while abs(a - b) >= val:
             licznik_przejsc += 1
 
-            isOk, c = calculate(f, a, b, czy_wielomian, *args)
+            is_ok, c = calculate(f, a, b, czy_wielomian, *args)
 
-            if not isOk:
+            if not is_ok:
                 return False, c, (licznik_przejsc + 1)
 
             # Oblicz wartość funkcji w punkcie c
@@ -51,12 +52,14 @@ def sieczne(f, a, b, con, val, *args):
             else:
                 fc = f(c)
 
-            # Sprawdź czy wartość bezwzględna funkcji w punkcie c jest mniejsza od wartości val
-            if abs(fc) < val:
+            # Sprawdź czy wartość bezwzględna funkcji w punkcie c jest prawie zerowa
+            if abs(fc) <= 0.0001:
                 return True, c, (licznik_przejsc + 1)
 
             # Przesuń punkty a i b
             a, b = b, c
+
+        return False, c, licznik_przejsc
 
 def calculate(f, a, b, czy_wielomian, *args):
     if czy_wielomian:
@@ -66,8 +69,10 @@ def calculate(f, a, b, czy_wielomian, *args):
         f_a = f(a)
         f_b = f(b)
 
+    # Sprawdź czy mianownik ze wzrou jest różny od zera
     if abs(f_b - f_a) < 1e-12:
         print("Ostrzeżenie: Mały mianownik - ryzyko błędu numerycznego")
         return False, b
 
+    # Oblicz punkt c na podstawie punktów a i b
     return True, b - f_b * (b - a) / (f_b - f_a)
