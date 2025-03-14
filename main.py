@@ -7,11 +7,11 @@ from horner import horner
 
 # 1. Baza predefiniowanych funkcji
 FUNKCJE = {
-    1: {"nazwa": "x^3 - 2x^2 + 5",
-        "f": lambda x: x ** 3 - 2 * x ** 2 + 5,
+    1: {"nazwa": "x^3 - 2x^2 + 1",
+        "f": lambda x: x ** 3 - 2 * x ** 2 + 1,
         "xrange": (-3, 4),
         "yrange": (-5, 5),
-        "wspolczynniki": (1, -2, 0, 5)},
+        "wspolczynniki": (1, -2, 0, 1)},
 
     2: {"nazwa": "sin(x) * ln(x+1)",
         "f": lambda x: math.sin(x) * math.log(x + 1),
@@ -150,24 +150,24 @@ def main():
 
         if wybor == 1:
             bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val, f['wspolczynniki'], len(f['wspolczynniki']))
-        else:
-            bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val)
-
-        if not bi_sukces:
-            print(f"BISEKCJA: Nie znaleziono rozwiązania w {bi_iteracje+1} iteracjach, zwrócono ostatnią wartość: {bi_wynik}")
-        else:
-            print(f"BISEKCJA: Znaleziono rozwiązanie: {bi_wynik} w {bi_iteracje+1} iteracjach")
-
-        if wybor == 1:
             si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val, f['wspolczynniki'], len(f['wspolczynniki']))
         else:
+            bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val)
             si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val)
 
-        if not si_sukces:
-            print(f"SIECZNE: Nie znaleziono rozwiązania w {si_iteracje+1} iteracjach, zwrócono ostatnią wartość: {si_wynik}")
+        if bi_sukces:
+            print(f"BISEKCJA: Znaleziono rozwiązanie: {bi_wynik} w {bi_iteracje + 1} iteracjach")
         else:
-            print(f"SIECZNE: Znaleziono rozwiązanie: {si_wynik} w {si_iteracje+1} iteracjach")
+            print(f"BISEKCJA: Nie znaleziono rozwiązania w {bi_iteracje + 1} iteracjach, zwrócono ostatnią wartość: {bi_wynik}")
+
+        if si_sukces:
+            print(f"SIECZNE: Znaleziono rozwiązanie: {si_wynik} w {si_iteracje + 1} iteracjach")
+        else:
+            print(f"SIECZNE: Nie znaleziono rozwiązania w {si_iteracje + 1} iteracjach, zwrócono ostatnią wartość: {si_wynik}")
+
+        # Nowy wykres z zaznaczonymi punktami
         wykres(f['f'], f['xrange'], f['yrange'], wybor, a, b, bi_wynik, f['f'](bi_wynik), si_wynik, f['f'](si_wynik))
+
     except ValueError as e:
         print(e)
 
