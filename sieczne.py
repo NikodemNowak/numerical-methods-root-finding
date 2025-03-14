@@ -1,73 +1,66 @@
 from horner import horner
 
-def sieczne(f, a, b, con, val, *args):
-    global c
+def sieczne(f, a, b, opcja_zakonczenia, wartosc_z_opcji, *args):
+
+    c = 0
     licznik_przejsc = -1
+
+    # Jeśli podano więcej argumentów to znaczy, że funkcja jest wielomianem
     czy_wielomian = len(args) > 0
 
-    if czy_wielomian:
-        fa = horner(a, args[0], args[1])
-        fb = horner(b, args[0], args[1])
-    else:
-        fa = f(a)
-        fb = f(b)
+    # Funkcja do obliczania wartości funkcji w danym punkcie
+    def wartosc_funkcji_w_punkcie(x):
+        if czy_wielomian:
+            return horner(x, args[0], args[1])
+        else:
+            return f(x)
 
+    fa = wartosc_funkcji_w_punkcie(a)
+    fb = wartosc_funkcji_w_punkcie(b)
+
+    # Sprawdź czy f(a) i f(b) mają przeciwne znaki
     if fa * fb > 0:
         raise ValueError("f(a) i f(b) muszą mieć przeciwne znaki")
 
-    # Dla ilości iteracji
-    if con == 't':
-        for i in range(val):
-            licznik_przejsc = i
 
-            # Oblicz punkt c na podstawie punktów a i b
-            is_ok, c = calculate(f, a, b, czy_wielomian, *args)
-
-            if not is_ok:
-                return False, c, (i + 1)
-
-            if czy_wielomian:
-                fc = horner(c, args[0], args[1])
-            else:
-                fc = f(c)
-
-            if abs(fc) <= 0.0001:
-                return True, c, (i + 1)
-
-            a, b = b, c
-
-    # Dla dokładności
+    # Główna pętla
+    if opcja_zakonczenia == 't':
+        max_iterations = wartosc_z_opcji
+        should_continue = lambda i: i < max_iterations
     else:
-        while abs(a - b) >= val:
-            licznik_przejsc += 1
+        max_iterations = float('inf')  # Teoretycznie nieskończona liczba iteracji
+        should_continue = lambda _: abs(a - b) >= wartosc_z_opcji
 
-            is_ok, c = calculate(f, a, b, czy_wielomian, *args)
+    i = 0
+    while should_continue(i):
+        licznik_przejsc = i
 
-            if not is_ok:
-                return False, c, (licznik_przejsc + 1)
+        # Oblicz punkt c na podstawie punktów a i b
+        czy_c_ok, c = oblicz_x_dla_c(wartosc_funkcji_w_punkcie, a, b)
 
-            # Oblicz wartość funkcji w punkcie c
-            if czy_wielomian:
-                fc = horner(c, args[0], args[1])
-            else:
-                fc = f(c)
+        if not czy_c_ok:
+            return False, c, (licznik_przejsc + 1)
 
-            # Sprawdź czy wartość bezwzględna funkcji w punkcie c jest prawie zerowa
+        fc = wartosc_funkcji_w_punkcie(c)
+
+        if max_iterations == float('inf'):
+            if abs(fc) <= wartosc_z_opcji:
+                return True, c, (licznik_przejsc + 1)
+        else:
             if abs(fc) <= 0.0001:
                 return True, c, (licznik_przejsc + 1)
 
-            # Przesuń punkty a i b
-            a, b = b, c
+        a, b = b, c
+        i += 1
 
-        return False, c, licznik_przejsc
+    return False, c, licznik_przejsc + 1
 
-def calculate(f, a, b, czy_wielomian, *args):
-    if czy_wielomian:
-        f_a = horner(a, args[0], args[1])
-        f_b = horner(b, args[0], args[1])
-    else:
-        f_a = f(a)
-        f_b = f(b)
+
+def oblicz_x_dla_c(wartosc_funkcji_w_punkcie, a, b):
+
+    # Oblicz wartość funkcji w punktach a i b
+    f_a = wartosc_funkcji_w_punkcie(a)
+    f_b = wartosc_funkcji_w_punkcie(b)
 
     # Sprawdź czy mianownik ze wzrou jest różny od zera
     if abs(f_b - f_a) < 1e-12:
@@ -76,3 +69,4 @@ def calculate(f, a, b, czy_wielomian, *args):
 
     # Oblicz punkt c na podstawie punktów a i b
     return True, b - f_b * (b - a) / (f_b - f_a)
+
