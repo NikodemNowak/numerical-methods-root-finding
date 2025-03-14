@@ -3,13 +3,15 @@ from bisekcja import bisekcja
 import matplotlib.pyplot as plt
 import numpy as np
 from sieczne import sieczne
+from horner import horner
 
 # 1. Baza predefiniowanych funkcji
 FUNKCJE = {
-    1: {"nazwa": "x^3 - 2e^x + 5",
-        "f": lambda x: x ** 3 - 2 * math.exp(x) + 5,
+    1: {"nazwa": "x^3 - 2x^2 + 5",
+        "f": lambda x: x ** 3 - 2 * x ** 2 + 5,
         "xrange": (-3, 4),
-        "yrange": (-5, 5)},
+        "yrange": (-5, 5),
+        "wspolczynniki": (1, -2, 0, 5)},
 
     2: {"nazwa": "sin(x) * ln(x+1)",
         "f": lambda x: math.sin(x) * math.log(x + 1),
@@ -35,12 +37,12 @@ def funkcja_menu():
         try:
             wybor = int(input("Wybierz numer funkcji: "))
             if wybor in FUNKCJE:
-                return FUNKCJE[wybor]
+                return FUNKCJE[wybor], wybor
             raise ValueError
         except ValueError:
             print("Błędny wybór, spróbuj ponownie!")
 
-def wykres(f, fx, fy, *args):
+def wykres(f, fx, fy, wybor, *args):
     # Stwórz 5000 punktów w wybranym zakresie
     x = np.linspace(fx[0], fx[1], 5000)
 
@@ -48,7 +50,10 @@ def wykres(f, fx, fy, *args):
     y = []
     for xi in x:
         try:
-            y.append(f(xi))
+            if wybor == 1:
+                y.append(horner(xi, FUNKCJE[wybor]['wspolczynniki'], len(FUNKCJE[wybor]['wspolczynniki'])))
+            else:
+                y.append(f(xi))
         except:
             y.append(np.nan)  # Oznacz miejsca nieokreślone
 
@@ -76,7 +81,7 @@ def wykres(f, fx, fy, *args):
     plt.show()
 
 
-def przedzial_menu(f):
+def przedzial_menu(f, wybor):
     while True:
         try:
             print("\nWybierz przedział [a,b] taki, że f(a) i f(b) mają różne znaki")
@@ -86,8 +91,12 @@ def przedzial_menu(f):
             if a >= b:
                 print("Błąd: Początek przedziału (a) musi być mniejszy niż koniec (b).")
             else:
-                fa = f(a)
-                fb = f(b)
+                if wybor == 1:
+                    fa = horner(a, FUNKCJE[wybor]['wspolczynniki'], len(FUNKCJE[wybor]['wspolczynniki']))
+                    fb = horner(b, FUNKCJE[wybor]['wspolczynniki'], len(FUNKCJE[wybor]['wspolczynniki']))
+                else:
+                    fa = f(a)
+                    fb = f(b)
 
                 if fa * fb < 0:
                     print(f"OK: f({a}) = {fa:.4f}, f({b}) = {fb:.4f}")
@@ -132,24 +141,33 @@ def opcja_menu():
 
 
 def main():
-    f = funkcja_menu()
+    f, wybor = funkcja_menu()
     print(f"Wybrana funkcja: {f['nazwa']}")
-    wykres(f['f'], f['xrange'], f['yrange'])
-    a, b = przedzial_menu(f['f'])
+    wykres(f['f'], f['xrange'], f['yrange'], wybor)
+    a, b = przedzial_menu(f['f'], wybor)
     con, val = opcja_menu()
     try:
-        bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val)
+
+        if wybor == 1:
+            bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val, f['wspolczynniki'], len(f['wspolczynniki']))
+        else:
+            bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val)
+
         if not bi_sukces:
             print(f"BISEKCJA: Nie znaleziono rozwiązania w {bi_iteracje+1} iteracjach, zwrócono ostatnią wartość: {bi_wynik}")
         else:
             print(f"BISEKCJA: Znaleziono rozwiązanie: {bi_wynik} w {bi_iteracje+1} iteracjach")
 
-        si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val)
+        if wybor == 1:
+            si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val, f['wspolczynniki'], len(f['wspolczynniki']))
+        else:
+            si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val)
+
         if not si_sukces:
             print(f"SIECZNE: Nie znaleziono rozwiązania w {si_iteracje+1} iteracjach, zwrócono ostatnią wartość: {si_wynik}")
         else:
             print(f"SIECZNE: Znaleziono rozwiązanie: {si_wynik} w {si_iteracje+1} iteracjach")
-        wykres(f['f'], f['xrange'], f['yrange'], a, b, bi_wynik, f['f'](bi_wynik), si_wynik, f['f'](si_wynik))
+        wykres(f['f'], f['xrange'], f['yrange'], wybor, a, b, bi_wynik, f['f'](bi_wynik), si_wynik, f['f'](si_wynik))
     except ValueError as e:
         print(e)
 
