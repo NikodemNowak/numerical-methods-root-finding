@@ -33,11 +33,14 @@ def funkcja_menu():
     print("Wybierz funkcję:")
     for i in FUNKCJE:
         print(f"{i}. {FUNKCJE[i]['nazwa']}")
+    print ("5. Zakończ program")
     while True:
         try:
             wybor = int(input("Wybierz numer funkcji: "))
             if wybor in FUNKCJE:
-                return FUNKCJE[wybor], wybor
+                return FUNKCJE[wybor], wybor, True
+            elif wybor == 5:
+                return None, None, False
             raise ValueError
         except ValueError:
             print("Błędny wybór, spróbuj ponownie!")
@@ -141,34 +144,42 @@ def opcja_menu():
 
 
 def main():
-    f, wybor = funkcja_menu()
-    print(f"Wybrana funkcja: {f['nazwa']}")
-    wykres(f['f'], f['xrange'], f['yrange'], wybor)
-    a, b = przedzial_menu(f['f'], wybor)
-    con, val = opcja_menu()
-    try:
+    kontynuowac = True
+    while kontynuowac:
+        f, wybor, kontynuowac = funkcja_menu()
+        if kontynuowac:
+            print(f"Wybrana funkcja: {f['nazwa']}")
+            wykres(f['f'], f['xrange'], f['yrange'], wybor)
+            a, b = przedzial_menu(f['f'], wybor)
+            con, val = opcja_menu()
+            try:
 
-        if wybor == 1:
-            bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val, f['wspolczynniki'], len(f['wspolczynniki']))
-            si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val, f['wspolczynniki'], len(f['wspolczynniki']))
-        else:
-            bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val)
-            si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val)
+                if wybor == 1:
+                    bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val, f['wspolczynniki'],
+                                                                len(f['wspolczynniki']))
+                    si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val, f['wspolczynniki'],
+                                                               len(f['wspolczynniki']))
+                else:
+                    bi_sukces, bi_wynik, bi_iteracje = bisekcja(f['f'], a, b, con, val)
+                    si_sukces, si_wynik, si_iteracje = sieczne(f['f'], a, b, con, val)
 
-        if bi_sukces:
-            print(f"BISEKCJA: Znaleziono rozwiązanie: {bi_wynik} w {bi_iteracje + 1} iteracjach")
-        else:
-            print(f"BISEKCJA: Nie znaleziono rozwiązania w {bi_iteracje + 1} iteracjach, zwrócono ostatnią wartość: {bi_wynik}")
+                if bi_sukces:
+                    print(f"BISEKCJA: Znaleziono rozwiązanie: {bi_wynik} w {bi_iteracje + 1} iteracjach")
+                else:
+                    print(
+                        f"BISEKCJA: Nie znaleziono rozwiązania w {bi_iteracje + 1} iteracjach, zwrócono ostatnią wartość: {bi_wynik}")
 
-        if si_sukces:
-            print(f"SIECZNE: Znaleziono rozwiązanie: {si_wynik} w {si_iteracje + 1} iteracjach")
-        else:
-            print(f"SIECZNE: Nie znaleziono rozwiązania w {si_iteracje + 1} iteracjach, zwrócono ostatnią wartość: {si_wynik}")
+                if si_sukces:
+                    print(f"SIECZNE: Znaleziono rozwiązanie: {si_wynik} w {si_iteracje + 1} iteracjach")
+                else:
+                    print(
+                        f"SIECZNE: Nie znaleziono rozwiązania w {si_iteracje + 1} iteracjach, zwrócono ostatnią wartość: {si_wynik}")
 
-        # Nowy wykres z zaznaczonymi punktami
-        wykres(f['f'], f['xrange'], f['yrange'], wybor, a, b, bi_wynik, f['f'](bi_wynik), si_wynik, f['f'](si_wynik))
+                # Nowy wykres z zaznaczonymi punktami
+                wykres(f['f'], f['xrange'], f['yrange'], wybor, a, b, bi_wynik, f['f'](bi_wynik), si_wynik,
+                       f['f'](si_wynik))
 
-    except ValueError as e:
-        print(e)
+            except ValueError as e:
+                print(e)
 
 main()
